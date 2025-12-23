@@ -1,0 +1,43 @@
+<?php
+// echo '<pre>';
+// print_r($_POST);
+// print_r($_FILES);
+// exit();
+$name = $_POST['name'];
+$price = $_POST['price'];
+$count = $_POST['count'];
+$description = $_POST['description'];
+$category = $_POST['category'];
+$brand = $_POST['brand'];
+
+include('../include/conn.php');
+
+$img_name = $_FILES['image']['name'];
+$img_tmp = $_FILES['image']['tmp_name'];
+$img_size = $_FILES['image']['size'];
+
+$img_exp = explode("." , $img_name);
+$img_ext = end($img_exp);
+
+$allow_ext = ['jpg' , 'jpeg' , 'png' , 'bmp'];
+;
+
+if(!in_array($img_ext , $allow_ext)){
+    echo 'no image';
+}elseif($img_size > 30000000){
+    echo 'image large';
+}
+
+$new_img = time() . rand(1,100000) . $img_name ;
+
+move_uploaded_file($img_tmp , "../img/$new_img");
+// echo '<pre>';
+// print_r($new_img);
+// exit();
+
+$insert = "INSERT INTO products12(name, price, cat, brand, count, descr , image) 
+VALUES ('$name','$price','$category','$brand','$count','$description','$new_img')";
+$conn -> query($insert);
+
+header('location:../product.php');
+?>
